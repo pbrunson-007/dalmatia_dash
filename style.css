@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "ArcadeFont";
+  src: url("./assets/fonts/PressStart2P-Regular.woff") format("woff");
+}
+
 * {
   box-sizing: border-box;
 }
@@ -5,11 +10,16 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: Arial, Helvetica, sans-serif;
-  color: #19312a;
-  background: #eef7f1;
+  font-family: "ArcadeFont", monospace;
+  color: #fff7d6;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    #15245a;
+  background-size: 28px 28px;
   display: grid;
   place-items: center;
+  padding: 18px;
 }
 
 .app {
@@ -19,8 +29,15 @@ body {
 
 .screen {
   display: grid;
-  gap: 18px;
+  gap: 22px;
   justify-items: center;
+  padding: 24px;
+  background: #0b1438;
+  border: 6px solid #fff7d6;
+  box-shadow:
+    0 0 0 6px #f33f7a,
+    0 0 0 12px #27d8ff,
+    10px 10px 0 #071029;
 }
 
 .hidden {
@@ -34,12 +51,26 @@ p {
 }
 
 h1 {
-  font-size: clamp(2rem, 6vw, 3.5rem);
-  line-height: 1.05;
+  font-size: clamp(1.25rem, 4vw, 2.4rem);
+  line-height: 1.35;
+  color: #ffe64d;
+  background: linear-gradient(180deg, #fff45c 0%, #ff9f1c 48%, #ff3f3f 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    3px 3px 0 #5b1d8f,
+    6px 6px 0 #071029;
+  text-transform: uppercase;
 }
 
 h2 {
-  font-size: 2.25rem;
+  font-size: 1.45rem;
+  color: #ff6b35;
+  text-shadow:
+    3px 3px 0 #5b1d8f,
+    5px 5px 0 #071029;
+  text-transform: uppercase;
 }
 
 .button-row {
@@ -50,20 +81,25 @@ h2 {
 }
 
 button {
-  border: 0;
-  border-radius: 8px;
+  border: 4px solid #fff7d6;
+  border-radius: 0;
   padding: 14px 20px;
   min-width: 170px;
-  font-size: 1rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  color: white;
-  background: #28705f;
+  font-family: inherit;
+  color: #071029;
+  background: #27d8ff;
   cursor: pointer;
+  box-shadow: 6px 6px 0 #f33f7a;
+  text-transform: uppercase;
 }
 
 button:hover,
 button:focus-visible {
-  background: #1c594b;
+  background: #ffe64d;
+  transform: translate(2px, 2px);
+  box-shadow: 4px 4px 0 #f33f7a;
 }
 
 .hud {
@@ -71,32 +107,184 @@ button:focus-visible {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  font-size: 1.1rem;
+  font-size: 0.82rem;
   font-weight: 700;
+  color: #ffe64d;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0 #071029;
 }
 
 canvas {
   width: 100%;
   max-width: 720px;
   aspect-ratio: 12 / 7;
-  border: 3px solid #19312a;
-  border-radius: 8px;
-  background: #bde7f5;
+  border: 8px solid #fff7d6;
+  border-radius: 0;
+  background: #27d8ff;
+  image-rendering: pixelated;
   display: block;
+  box-shadow:
+    0 0 0 6px #071029,
+    8px 8px 0 #f33f7a;
 }
 
 .score-line {
-  font-size: 1.35rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  text-shadow: 2px 2px 0 #071029;
+}
+
+.leaderboard,
+.score-form {
+  width: min(100%, 440px);
+  color: #fff7d6;
+  background: #15245a;
+  border: 5px solid #ffe64d;
+  padding: 14px;
+  box-shadow: 6px 6px 0 #27d8ff;
+}
+
+.leaderboard h2 {
+  margin-bottom: 12px;
+  font-size: 0.86rem;
+  color: #27d8ff;
+  text-shadow:
+    2px 2px 0 #5b1d8f,
+    4px 4px 0 #071029;
+}
+
+.score-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style-position: inside;
+  text-align: left;
+}
+
+.score-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 10px;
+  color: #ffe64d;
+  background: #071029;
+  border: 3px solid #f33f7a;
+  font-weight: 700;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.rank-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.medal {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  border: 3px solid #071029;
+  background: var(--medal-main);
+  box-shadow:
+    3px 0 0 #071029,
+    0 3px 0 #071029,
+    inset 4px 4px 0 var(--medal-light),
+    inset -4px -4px 0 var(--medal-dark);
+}
+
+.medal::before,
+.medal::after {
+  content: "";
+  position: absolute;
+  top: 17px;
+  width: 7px;
+  height: 12px;
+  background: #e3347a;
+  border: 2px solid #071029;
+  box-shadow: inset -2px -2px 0 #8a1646;
+}
+
+.medal::before {
+  left: 2px;
+}
+
+.medal::after {
+  right: 2px;
+}
+
+.medal.gold {
+  --medal-main: #ffbf1f;
+  --medal-light: #fff45c;
+  --medal-dark: #d98200;
+}
+
+.medal.silver {
+  --medal-main: #c7d0d8;
+  --medal-light: #ffffff;
+  --medal-dark: #7a8792;
+}
+
+.medal.bronze {
+  --medal-main: #b86a2c;
+  --medal-light: #ffb15c;
+  --medal-dark: #74401d;
+}
+
+.score-list .empty-score {
+  color: #fff7d6;
+}
+
+.score-form {
+  display: grid;
+  gap: 10px;
+}
+
+.score-form label {
+  color: #ffe64d;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.name-row {
+  display: flex;
+  gap: 12px;
+}
+
+input {
+  width: 100%;
+  min-width: 0;
+  border: 4px solid #fff7d6;
+  border-radius: 0;
+  padding: 12px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffe64d;
+  background: #071029;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.score-form button {
+  min-width: 104px;
 }
 
 .fact {
   max-width: 560px;
-  font-size: 1.15rem;
-  line-height: 1.45;
-  background: white;
-  border: 2px solid #cfe2d8;
-  border-radius: 8px;
+  font-size: 0.72rem;
+  line-height: 1.75;
+  color: #fff7d6;
+  background: #15245a;
+  border: 5px solid #27d8ff;
+  border-radius: 0;
   padding: 18px;
+  box-shadow: 6px 6px 0 #f33f7a;
 }
 
 @media (max-width: 520px) {
@@ -107,5 +295,9 @@ canvas {
 
   button {
     width: 100%;
+  }
+
+  .name-row {
+    flex-direction: column;
   }
 }

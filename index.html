@@ -10,6 +10,10 @@
     <main class="app">
       <section id="start-screen" class="screen">
         <h1>Dalmatian Species Survival Game</h1>
+        <div class="leaderboard">
+          <h2>Top Scores</h2>
+          <ol id="start-leaderboard" class="score-list"></ol>
+        </div>
         <div class="button-row">
           <button id="apollo-button" type="button">Apollo Butterfly</button>
           <button id="vulture-button" type="button">Griffin Vulture</button>
@@ -28,6 +32,24 @@
         <h2>Game Over</h2>
         <p class="score-line">Final score: <strong id="final-score">0</strong></p>
         <p id="fact-text" class="fact"></p>
+        <form id="score-form" class="score-form">
+          <label for="player-name">Enter Name</label>
+          <div class="name-row">
+            <input
+              id="player-name"
+              type="text"
+              maxlength="4"
+              autocomplete="off"
+              inputmode="text"
+              aria-label="4 character arcade name"
+            />
+            <button type="submit">Save</button>
+          </div>
+        </form>
+        <div class="leaderboard">
+          <h2>Top Scores</h2>
+          <ol id="game-over-leaderboard" class="score-list"></ol>
+        </div>
         <button id="restart-button" type="button">Restart</button>
       </section>
     </main>
