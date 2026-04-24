@@ -13,9 +13,14 @@ const playerNameInput = document.getElementById("player-name");
 const scoreSubmitButton = scoreForm.querySelector("button");
 const startLeaderboard = document.getElementById("start-leaderboard");
 const gameOverLeaderboard = document.getElementById("game-over-leaderboard");
+const apolloButton = document.getElementById("apollo-button");
+const vultureButton = document.getElementById("vulture-button");
+const restartButton = document.getElementById("restart-button");
 
 const leaderboardKey = "dalmatianSpeciesTopScores";
 const collectibleBonus = 5;
+const startMenuItems = [apolloButton, vultureButton];
+const gameOverMenuItems = [playerNameInput, scoreSubmitButton, restartButton];
 
 const speciesData = {
   apollo: {
@@ -26,7 +31,12 @@ const speciesData = {
     accentColor: "#ff4fa3",
     obstacleColor: "#7a4f24",
     obstacleLabel: "Habitat loss",
-    fact: "Apollo butterflies are threatened by habitat fragmentation in Europe.",
+    facts: [
+      "Did you know: Apollo butterflies depend on open mountain meadows and can be harmed when habitats become fragmented.",
+      "Did you know: Apollo butterfly caterpillars feed on stonecrop plants that grow well in rocky limestone landscapes.",
+      "Did you know: On the Dalmatian coast, karst habitats can support rare plants that butterflies need to survive.",
+      "Did you know: When meadows are split apart by roads or development, Apollo butterflies have fewer safe places to fly and reproduce.",
+    ],
   },
   vulture: {
     name: "Griffin Vulture",
@@ -36,7 +46,12 @@ const speciesData = {
     accentColor: "#3c2d24",
     obstacleColor: "#5d6b82",
     obstacleLabel: "Cliffs / power lines",
-    fact: "Griffin vultures rely on thermal currents and are impacted by human infrastructure.",
+    facts: [
+      "Did you know: Griffin vultures use warm rising air currents to glide above cliffs and karst landscapes with very little wing flapping.",
+      "Did you know: Power lines and other human infrastructure can be dangerous for large soaring birds like Griffin vultures.",
+      "Did you know: Griffin vultures help ecosystems by cleaning up carrion and returning nutrients to the landscape.",
+      "Did you know: Rocky cliffs along Mediterranean karst areas can provide important nesting places for Griffin vultures.",
+    ],
   },
 };
 
@@ -51,12 +66,22 @@ let frameCount;
 let animationId;
 let gameRunning = false;
 let scoreSubmitted = false;
+let startMenuIndex = 0;
+let gameOverMenuIndex = 0;
 
 function showScreen(screen) {
   startScreen.classList.add("hidden");
   gameScreen.classList.add("hidden");
   gameOverScreen.classList.add("hidden");
   screen.classList.remove("hidden");
+
+  if (screen === startScreen) {
+    setStartMenuFocus(0);
+  } else if (screen === gameOverScreen) {
+    setGameOverMenuFocus(0);
+  } else {
+    clearMenuFocus();
+  }
 }
 
 function startGame(speciesKey) {
@@ -365,7 +390,7 @@ function endGame() {
   cancelAnimationFrame(animationId);
   finalScoreValue = Math.floor(score / 10);
   finalScore.textContent = finalScoreValue;
-  factText.textContent = selectedSpecies.fact;
+  factText.textContent = getRandomFact();
   renderLeaderboards();
   showScreen(gameOverScreen);
   playerNameInput.focus();
@@ -373,6 +398,11 @@ function endGame() {
 
 function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomFact() {
+  const facts = selectedSpecies.facts;
+  return facts[randomNumber(0, facts.length - 1)];
 }
 
 function getLeaderboard() {
@@ -459,9 +489,90 @@ function formatArcadeName(name) {
   return arcadeName || "????";
 }
 
-document.getElementById("apollo-button").addEventListener("click", () => startGame("apollo"));
-document.getElementById("vulture-button").addEventListener("click", () => startGame("vulture"));
-document.getElementById("restart-button").addEventListener("click", () => showScreen(startScreen));
+function setStartMenuFocus(index) {
+  startMenuIndex = wrapIndex(index, startMenuItems.length);
+  clearMenuFocus();
+  startMenuItems[startMenuIndex].classList.add("menu-selected");
+  startMenuItems[startMenuIndex].focus();
+}
+
+function setGameOverMenuFocus(index) {
+  gameOverMenuIndex = wrapIndex(index, gameOverMenuItems.length);
+
+  if (gameOverMenuItems[gameOverMenuIndex].disabled) {
+    setGameOverMenuFocus(gameOverMenuIndex + 1);
+    return;
+  }
+
+  clearMenuFocus();
+  gameOverMenuItems[gameOverMenuIndex].classList.add("menu-selected");
+  gameOverMenuItems[gameOverMenuIndex].focus();
+}
+
+function clearMenuFocus() {
+  for (const item of [...startMenuItems, ...gameOverMenuItems]) {
+    item.classList.remove("menu-selected");
+  }
+}
+
+function wrapIndex(index, itemCount) {
+  return (index + itemCount) % itemCount;
+}
+
+function isStartScreenVisible() {
+  return !startScreen.classList.contains("hidden");
+}
+
+function isGameOverScreenVisible() {
+  return !gameOverScreen.classList.contains("hidden");
+}
+
+function isArrowKey(code) {
+  return ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(code);
+}
+
+function moveDirection(code) {
+  return code === "ArrowLeft" || code === "ArrowUp" ? -1 : 1;
+}
+
+function handleStartMenuKey(event) {
+  if (isArrowKey(event.code)) {
+    event.preventDefault();
+    setStartMenuFocus(startMenuIndex + moveDirection(event.code));
+    return;
+  }
+
+  if (event.code === "Enter") {
+    event.preventDefault();
+    startMenuItems[startMenuIndex].click();
+  }
+}
+
+function handleGameOverMenuKey(event) {
+  if (isArrowKey(event.code)) {
+    event.preventDefault();
+    setGameOverMenuFocus(gameOverMenuIndex + moveDirection(event.code));
+    return;
+  }
+
+  if (event.code !== "Enter") {
+    return;
+  }
+
+  event.preventDefault();
+
+  if (gameOverMenuItems[gameOverMenuIndex] === playerNameInput) {
+    scoreForm.requestSubmit();
+  } else if (gameOverMenuItems[gameOverMenuIndex] === scoreSubmitButton) {
+    scoreForm.requestSubmit();
+  } else {
+    restartButton.click();
+  }
+}
+
+apolloButton.addEventListener("click", () => startGame("apollo"));
+vultureButton.addEventListener("click", () => startGame("vulture"));
+restartButton.addEventListener("click", () => showScreen(startScreen));
 
 scoreForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -475,6 +586,7 @@ scoreForm.addEventListener("submit", (event) => {
   playerNameInput.disabled = true;
   scoreSubmitButton.disabled = true;
   scoreSubmitButton.textContent = "Saved";
+  setGameOverMenuFocus(2);
 });
 
 playerNameInput.addEventListener("input", () => {
@@ -482,6 +594,16 @@ playerNameInput.addEventListener("input", () => {
 });
 
 window.addEventListener("keydown", (event) => {
+  if (isStartScreenVisible()) {
+    handleStartMenuKey(event);
+    return;
+  }
+
+  if (isGameOverScreenVisible()) {
+    handleGameOverMenuKey(event);
+    return;
+  }
+
   if (event.code === "Space") {
     event.preventDefault();
     flap();
@@ -490,3 +612,4 @@ window.addEventListener("keydown", (event) => {
 
 canvas.addEventListener("click", flap);
 renderLeaderboards();
+setStartMenuFocus(0);

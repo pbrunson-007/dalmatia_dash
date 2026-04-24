@@ -29,26 +29,28 @@
       </section>
 
       <section id="game-over-screen" class="screen hidden">
-        <h2>Game Over</h2>
+        <h2 class="game-over-title">Game Over</h2>
         <p class="score-line">Final score: <strong id="final-score">0</strong></p>
         <p id="fact-text" class="fact"></p>
-        <form id="score-form" class="score-form">
-          <label for="player-name">Enter Name</label>
-          <div class="name-row">
-            <input
-              id="player-name"
-              type="text"
-              maxlength="4"
-              autocomplete="off"
-              inputmode="text"
-              aria-label="4 character arcade name"
-            />
-            <button type="submit">Save</button>
+        <div class="game-over-bottom">
+          <form id="score-form" class="score-form">
+            <label for="player-name">Enter Name</label>
+            <div class="name-row">
+              <input
+                id="player-name"
+                type="text"
+                maxlength="4"
+                autocomplete="off"
+                inputmode="text"
+                aria-label="4 character arcade name"
+              />
+              <button type="submit">Save</button>
+            </div>
+          </form>
+          <div class="leaderboard">
+            <h2>Top Scores</h2>
+            <ol id="game-over-leaderboard" class="score-list"></ol>
           </div>
-        </form>
-        <div class="leaderboard">
-          <h2>Top Scores</h2>
-          <ol id="game-over-leaderboard" class="score-list"></ol>
         </div>
         <button id="restart-button" type="button">Restart</button>
       </section>

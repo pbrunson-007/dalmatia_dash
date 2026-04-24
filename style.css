@@ -102,6 +102,33 @@ button:focus-visible {
   box-shadow: 4px 4px 0 #f33f7a;
 }
 
+button.menu-selected,
+input.menu-selected,
+button:focus-visible,
+input:focus-visible {
+  outline: 0;
+  box-shadow:
+    0 0 0 4px #ffe64d,
+    0 0 0 8px #f33f7a,
+    6px 6px 0 #071029;
+}
+
+button.menu-selected {
+  background: #ffe64d;
+  transform: translate(2px, 2px);
+}
+
+input.menu-selected {
+  border-color: #ffe64d;
+}
+
+button:disabled {
+  color: #7a8792;
+  background: #15245a;
+  cursor: default;
+  transform: none;
+}
+
 .hud {
   width: 100%;
   display: flex;
@@ -132,6 +159,29 @@ canvas {
   font-size: 0.9rem;
   line-height: 1.6;
   text-shadow: 2px 2px 0 #071029;
+}
+
+#game-over-screen {
+  width: 100%;
+  gap: 16px;
+}
+
+.game-over-title {
+  font-size: clamp(2.2rem, 8vw, 4.6rem);
+  line-height: 1.12;
+}
+
+#game-over-screen .score-line {
+  color: #ffe64d;
+  font-size: clamp(0.85rem, 2.5vw, 1.15rem);
+}
+
+.game-over-bottom {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
 }
 
 .leaderboard,
@@ -276,15 +326,82 @@ input {
 }
 
 .fact {
-  max-width: 560px;
-  font-size: 0.72rem;
-  line-height: 1.75;
+  width: 100%;
+  max-width: 690px;
+  min-height: 128px;
+  display: grid;
+  place-items: center;
+  font-size: clamp(0.78rem, 1.8vw, 0.95rem);
+  line-height: 1.85;
   color: #fff7d6;
   background: #15245a;
   border: 5px solid #27d8ff;
   border-radius: 0;
-  padding: 18px;
+  padding: 24px;
   box-shadow: 6px 6px 0 #f33f7a;
+}
+
+#game-over-screen .score-form,
+#game-over-screen .leaderboard {
+  width: 100%;
+  padding: 8px;
+  box-shadow: 4px 4px 0 #27d8ff;
+}
+
+#game-over-screen .leaderboard h2 {
+  margin-bottom: 6px;
+  font-size: 0.66rem;
+}
+
+#game-over-screen .score-list {
+  gap: 4px;
+}
+
+#game-over-screen .score-list li {
+  gap: 8px;
+  padding: 5px 6px;
+  font-size: 0.56rem;
+  line-height: 1.35;
+}
+
+#game-over-screen .medal {
+  width: 18px;
+  height: 18px;
+  flex-basis: 18px;
+}
+
+#game-over-screen .medal::before,
+#game-over-screen .medal::after {
+  top: 14px;
+  width: 6px;
+  height: 9px;
+}
+
+#game-over-screen .score-form {
+  align-content: center;
+  gap: 7px;
+}
+
+#game-over-screen .score-form label {
+  font-size: 0.6rem;
+}
+
+#game-over-screen .name-row {
+  gap: 8px;
+}
+
+#game-over-screen input,
+#game-over-screen .score-form button {
+  padding: 9px;
+  font-size: 0.6rem;
+}
+
+#game-over-screen .score-form button {
+  min-width: 82px;
+}
+
+#restart-button {
+  margin-top: 4px;
 }
 
 @media (max-width: 520px) {
@@ -299,5 +416,22 @@ input {
 
   .name-row {
     flex-direction: column;
+  }
+
+  .game-over-bottom {
+    gap: 10px;
+  }
+
+  .medal {
+    width: 18px;
+    height: 18px;
+    flex-basis: 18px;
+  }
+
+  .medal::before,
+  .medal::after {
+    top: 14px;
+    width: 6px;
+    height: 10px;
   }
 }
