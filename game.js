@@ -5,6 +5,7 @@ const gameScreen = document.getElementById("game-screen");
 const gameOverScreen = document.getElementById("game-over-screen");
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
+const gameStage = document.querySelector(".game-stage");
 const countdownOverlay = document.getElementById("countdown-overlay");
 
 const speciesLabel = document.getElementById("species-label");
@@ -28,6 +29,8 @@ const gameOverInfoButton = document.getElementById("game-over-info-button");
 const leaderboardKey = "dalmatianSpeciesTopScores";
 const collectibleBonus = 5;
 const countdownLabels = ["3", "2", "1", "GO!"];
+const defaultCanvasWidth = 720;
+const defaultCanvasHeight = 420;
 const startMenuItems = [speciesInfoButton, apolloButton, vultureButton, ecosystemButton];
 const ecosystemMenuItems = [ecosystemBackButton];
 const gameOverMenuItems = [playerNameInput, scoreSubmitButton, restartButton, gameOverInfoButton];
@@ -81,6 +84,7 @@ let gameState = "info";
 let startMenuIndex = 0;
 let ecosystemMenuIndex = 0;
 let gameOverMenuIndex = 0;
+let lastTouchInputTime = 0;
 
 function showScreen(screen) {
   infoScreen.classList.add("hidden");
@@ -92,23 +96,29 @@ function showScreen(screen) {
 
   if (screen === infoScreen) {
     gameState = "info";
+    document.body.dataset.screen = "info";
     setInfoMenuFocus();
   } else if (screen === startScreen) {
     gameState = "speciesSelect";
+    document.body.dataset.screen = "species";
     setStartMenuFocus(1);
   } else if (screen === ecosystemScreen) {
     gameState = "ecosystem";
+    document.body.dataset.screen = "ecosystem";
     setEcosystemMenuFocus(0);
   } else if (screen === gameOverScreen) {
     gameState = "gameOver";
+    document.body.dataset.screen = "gameOver";
     setGameOverMenuFocus(0);
   } else {
+    document.body.dataset.screen = "game";
     clearMenuFocus();
   }
 }
 
 function startGame(speciesKey) {
   resetActiveGame();
+  configureCanvasForGameplay();
   selectedSpecies = speciesData[speciesKey];
   speciesLabel.textContent = selectedSpecies.name;
 
@@ -188,6 +198,31 @@ function resetActiveGame() {
   window.clearTimeout(countdownTimeoutId);
   countdownOverlay.classList.add("hidden");
   countdownOverlay.textContent = "";
+}
+
+function configureCanvasForGameplay() {
+  if (!isMobileViewport()) {
+    canvas.width = defaultCanvasWidth;
+    canvas.height = defaultCanvasHeight;
+    return;
+  }
+
+  const viewport = window.visualViewport || window;
+  const viewportWidth = Math.floor(viewport.width || window.innerWidth);
+  const viewportHeight = Math.floor(viewport.height || window.innerHeight);
+  const nextWidth = clampNumber(viewportWidth - 22, 320, 520);
+  const nextHeight = clampNumber(viewportHeight - 86, 460, 760);
+
+  canvas.width = nextWidth;
+  canvas.height = nextHeight;
+}
+
+function isMobileViewport() {
+  return window.matchMedia("(max-width: 520px)").matches;
+}
+
+function clampNumber(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }
 
 function returnToInfo() {
@@ -310,13 +345,14 @@ function drawBackground() {
 
   ctx.fillStyle = "#fff7d6";
   drawPixelCloud(80, 70);
-  drawPixelCloud(420, 105);
+  drawPixelCloud(Math.max(190, canvas.width - 300), 105);
 
   ctx.fillStyle = "#ffe64d";
-  ctx.fillRect(610, 36, 36, 36);
+  const sunX = Math.max(230, canvas.width - 110);
+  ctx.fillRect(sunX, 36, 36, 36);
   ctx.fillStyle = "#ff9f1c";
-  ctx.fillRect(646, 48, 12, 12);
-  ctx.fillRect(598, 48, 12, 12);
+  ctx.fillRect(sunX + 36, 48, 12, 12);
+  ctx.fillRect(sunX - 12, 48, 12, 12);
 }
 
 function drawPixelCloud(x, y) {
@@ -695,6 +731,30 @@ function handleGameOverMenuKey(event) {
   }
 }
 
+function handleGameTouch(event) {
+  if (gameState !== "playing" && gameState !== "countdown") {
+    return;
+  }
+
+  event.preventDefault();
+
+  if (gameState !== "playing") {
+    return;
+  }
+
+  lastTouchInputTime = Date.now();
+  flap();
+}
+
+function handleCanvasClick(event) {
+  if (Date.now() - lastTouchInputTime < 450) {
+    event.preventDefault();
+    return;
+  }
+
+  flap();
+}
+
 startGameButton.addEventListener("click", () => showScreen(startScreen));
 speciesInfoButton.addEventListener("click", returnToInfo);
 ecosystemButton.addEventListener("click", () => showScreen(ecosystemScreen));
@@ -750,6 +810,25 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
-canvas.addEventListener("click", flap);
+gameScreen.addEventListener("pointerdown", (event) => {
+  if (event.pointerType === "mouse") {
+    return;
+  }
+
+  handleGameTouch(event);
+});
+gameScreen.addEventListener("touchstart", (event) => {
+  if (window.PointerEvent) {
+    return;
+  }
+
+  handleGameTouch(event);
+}, { passive: false });
+gameStage.addEventListener("touchmove", (event) => {
+  if (gameState === "playing" || gameState === "countdown") {
+    event.preventDefault();
+  }
+}, { passive: false });
+canvas.addEventListener("click", handleCanvasClick);
 renderLeaderboards();
 setInfoMenuFocus();
