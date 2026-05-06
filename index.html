@@ -7,8 +7,114 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <main class="app">
-      <section id="start-screen" class="screen">
+    <div class="arcade-screen">
+      <main class="app">
+        <section id="info-screen" class="screen info-screen">
+        <h1>Dalmatian Species Survival Game</h1>
+        <p class="subtitle">An interactive ecology project</p>
+
+        <div class="info-copy" aria-label="Project information">
+          <section class="info-block">
+            <h2>About</h2>
+            <p>
+              This project was created by our ecology group as part of our Dalmatian Coast
+              ecology assignment. Our goal was to make our booth more interactive by turning
+              species research into a simple arcade-style survival game.
+            </p>
+          </section>
+
+          <section class="info-block">
+            <h2>Why We Made It</h2>
+            <p>
+              Our professor encouraged us to find a creative way to engage visitors during the
+              outreach event. This game was our response: a small, playable experience that helps
+              students learn while interacting with our project.
+            </p>
+          </section>
+
+          <section class="info-block featured-species">
+            <h2>Featured Species</h2>
+            <ul>
+              <li>
+                <strong>Apollo Butterfly</strong>
+                <span>A butterfly affected by habitat fragmentation and environmental change.</span>
+              </li>
+              <li>
+                <strong>Griffon Vulture</strong>
+                <span>A large scavenging bird impacted by habitat conditions and human infrastructure.</span>
+              </li>
+            </ul>
+          </section>
+
+          <section class="info-block how-to-play">
+            <h2>How to Play</h2>
+            <p>
+              Choose a species, avoid obstacles, collect Dalmatian karst stones for bonus points,
+              and learn an ecology fact after each round.
+            </p>
+          </section>
+        </div>
+
+        <section class="team-section" aria-labelledby="team-heading">
+          <h2 id="team-heading">Team Members</h2>
+          <div class="team-grid">
+            <article class="team-card" tabindex="0">
+              <div class="pixel-avatar avatar-manuel" role="img" aria-label="Pixel portrait of Manuel">
+                <span class="avatar-hair"></span>
+                <span class="avatar-face"></span>
+                <span class="avatar-ear avatar-ear-left"></span>
+                <span class="avatar-ear avatar-ear-right"></span>
+                <span class="avatar-eye avatar-eye-left"></span>
+                <span class="avatar-eye avatar-eye-right"></span>
+                <span class="avatar-smile"></span>
+                <span class="avatar-neck"></span>
+                <span class="avatar-shirt"></span>
+              </div>
+              <h3>Manuel Erraez Delgado</h3>
+              <p>Hospitality and Tourism Management / Marketing</p>
+              <a href="mailto:mwe9668@g.rit.edu">mwe9668@g.rit.edu</a>
+            </article>
+
+            <article class="team-card" tabindex="0">
+              <div class="pixel-avatar avatar-borna" role="img" aria-label="Pixel portrait of Borna">
+                <span class="avatar-hair"></span>
+                <span class="avatar-face"></span>
+                <span class="avatar-ear avatar-ear-left"></span>
+                <span class="avatar-ear avatar-ear-right"></span>
+                <span class="avatar-eye avatar-eye-left"></span>
+                <span class="avatar-eye avatar-eye-right"></span>
+                <span class="avatar-smile"></span>
+                <span class="avatar-neck"></span>
+                <span class="avatar-shirt"></span>
+              </div>
+              <h3>Borna Škec</h3>
+              <p>Web and Mobile Computing</p>
+              <a href="mailto:bs3643@g.rit.edu">bs3643@g.rit.edu</a>
+            </article>
+
+            <article class="team-card" tabindex="0">
+              <div class="pixel-avatar avatar-prophet" role="img" aria-label="Pixel portrait of Prophet">
+                <span class="avatar-hair"></span>
+                <span class="avatar-face"></span>
+                <span class="avatar-ear avatar-ear-left"></span>
+                <span class="avatar-ear avatar-ear-right"></span>
+                <span class="avatar-eye avatar-eye-left"></span>
+                <span class="avatar-eye avatar-eye-right"></span>
+                <span class="avatar-smile"></span>
+                <span class="avatar-neck"></span>
+                <span class="avatar-shirt"></span>
+              </div>
+              <h3>Prophet K.C Brunson</h3>
+              <p>Web and Mobile Computing</p>
+              <a href="mailto:pkb4260@g.rit.edu">pkb4260@g.rit.edu</a>
+            </article>
+          </div>
+        </section>
+
+        <button id="start-game-button" type="button">Start Game</button>
+        </section>
+
+        <section id="start-screen" class="screen hidden">
         <h1>Dalmatian Species Survival Game</h1>
         <div class="leaderboard">
           <h2>Top Scores</h2>
@@ -16,19 +122,69 @@
         </div>
         <div class="button-row">
           <button id="apollo-button" type="button">Apollo Butterfly</button>
-          <button id="vulture-button" type="button">Griffin Vulture</button>
+          <button id="vulture-button" type="button">Griffon Vulture</button>
         </div>
-      </section>
+        <div class="menu-nav">
+          <button id="species-info-button" class="arrow-button arrow-left" type="button">
+            Project Info
+          </button>
+          <button id="ecosystem-button" class="arrow-button arrow-right" type="button">
+            Ecosystem
+          </button>
+        </div>
+        </section>
 
-      <section id="game-screen" class="screen hidden">
+        <section id="ecosystem-screen" class="screen ecosystem-screen hidden">
+        <h1>Dalmatian Coast Ecosystem</h1>
+        <div class="ecosystem-grid">
+          <article class="ecosystem-card">
+            <h2>Alpine Region</h2>
+            <p>
+              High mountain habitats have cooler air, rocky ground, and short growing seasons.
+              Many species survive by using small protected spaces.
+            </p>
+          </article>
+          <article class="ecosystem-card">
+            <h2>Velebit</h2>
+            <p>
+              Velebit connects coastal and mountain environments. Its cliffs, forests, and karst
+              landscapes create important wildlife habitat.
+            </p>
+          </article>
+          <article class="ecosystem-card">
+            <h2>Apollo Butterfly</h2>
+            <p>
+              Apollo butterflies rely on open rocky meadows. Habitat fragmentation can make it
+              harder for them to find food plants and mates.
+            </p>
+          </article>
+          <article class="ecosystem-card">
+            <h2>Griffon Vulture</h2>
+            <p>
+              Griffon vultures soar over cliffs and open landscapes. They help ecosystems by
+              cleaning up carrion and recycling nutrients.
+            </p>
+          </article>
+        </div>
+        <div class="menu-nav menu-nav-left">
+          <button id="ecosystem-back-button" class="arrow-button arrow-left" type="button">
+            Back to Game
+          </button>
+        </div>
+        </section>
+
+        <section id="game-screen" class="screen hidden">
         <div class="hud">
           <span id="species-label">Species</span>
           <span>Score: <strong id="score-label">0</strong></span>
         </div>
-        <canvas id="game-canvas" width="720" height="420"></canvas>
-      </section>
+        <div class="game-stage">
+          <canvas id="game-canvas" width="720" height="420"></canvas>
+          <div id="countdown-overlay" class="countdown-overlay hidden" aria-live="polite"></div>
+        </div>
+        </section>
 
-      <section id="game-over-screen" class="screen hidden">
+        <section id="game-over-screen" class="screen hidden">
         <h2 class="game-over-title">Game Over</h2>
         <p class="score-line">Final score: <strong id="final-score">0</strong></p>
         <p id="fact-text" class="fact"></p>
@@ -52,9 +208,13 @@
             <ol id="game-over-leaderboard" class="score-list"></ol>
           </div>
         </div>
-        <button id="restart-button" type="button">Restart</button>
-      </section>
-    </main>
+        <div class="button-row">
+          <button id="restart-button" type="button">Restart</button>
+          <button id="game-over-info-button" type="button">Project Info</button>
+        </div>
+        </section>
+      </main>
+    </div>
 
     <script src="game.js"></script>
   </body>

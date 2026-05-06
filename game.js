@@ -1,8 +1,11 @@
+const infoScreen = document.getElementById("info-screen");
 const startScreen = document.getElementById("start-screen");
+const ecosystemScreen = document.getElementById("ecosystem-screen");
 const gameScreen = document.getElementById("game-screen");
 const gameOverScreen = document.getElementById("game-over-screen");
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
+const countdownOverlay = document.getElementById("countdown-overlay");
 
 const speciesLabel = document.getElementById("species-label");
 const scoreLabel = document.getElementById("score-label");
@@ -13,14 +16,21 @@ const playerNameInput = document.getElementById("player-name");
 const scoreSubmitButton = scoreForm.querySelector("button");
 const startLeaderboard = document.getElementById("start-leaderboard");
 const gameOverLeaderboard = document.getElementById("game-over-leaderboard");
+const startGameButton = document.getElementById("start-game-button");
+const speciesInfoButton = document.getElementById("species-info-button");
+const ecosystemButton = document.getElementById("ecosystem-button");
+const ecosystemBackButton = document.getElementById("ecosystem-back-button");
 const apolloButton = document.getElementById("apollo-button");
 const vultureButton = document.getElementById("vulture-button");
 const restartButton = document.getElementById("restart-button");
+const gameOverInfoButton = document.getElementById("game-over-info-button");
 
 const leaderboardKey = "dalmatianSpeciesTopScores";
 const collectibleBonus = 5;
-const startMenuItems = [apolloButton, vultureButton];
-const gameOverMenuItems = [playerNameInput, scoreSubmitButton, restartButton];
+const countdownLabels = ["3", "2", "1", "GO!"];
+const startMenuItems = [speciesInfoButton, apolloButton, vultureButton, ecosystemButton];
+const ecosystemMenuItems = [ecosystemBackButton];
+const gameOverMenuItems = [playerNameInput, scoreSubmitButton, restartButton, gameOverInfoButton];
 
 const speciesData = {
   apollo: {
@@ -39,7 +49,7 @@ const speciesData = {
     ],
   },
   vulture: {
-    name: "Griffin Vulture",
+    name: "Griffon Vulture",
     gravity: 0.34,
     flapPower: -6.8,
     playerColor: "#d6c09c",
@@ -47,10 +57,10 @@ const speciesData = {
     obstacleColor: "#5d6b82",
     obstacleLabel: "Cliffs / power lines",
     facts: [
-      "Did you know: Griffin vultures use warm rising air currents to glide above cliffs and karst landscapes with very little wing flapping.",
-      "Did you know: Power lines and other human infrastructure can be dangerous for large soaring birds like Griffin vultures.",
-      "Did you know: Griffin vultures help ecosystems by cleaning up carrion and returning nutrients to the landscape.",
-      "Did you know: Rocky cliffs along Mediterranean karst areas can provide important nesting places for Griffin vultures.",
+      "Did you know: Griffon vultures use warm rising air currents to glide above cliffs and karst landscapes with very little wing flapping.",
+      "Did you know: Power lines and other human infrastructure can be dangerous for large soaring birds like Griffon vultures.",
+      "Did you know: Griffon vultures help ecosystems by cleaning up carrion and returning nutrients to the landscape.",
+      "Did you know: Rocky cliffs along Mediterranean karst areas can provide important nesting places for Griffon vultures.",
     ],
   },
 };
@@ -61,23 +71,36 @@ let obstacles;
 let collectibles;
 let bonusPopups;
 let score;
+let displayedScore = null;
 let finalScoreValue;
 let frameCount;
 let animationId;
-let gameRunning = false;
 let scoreSubmitted = false;
+let countdownTimeoutId;
+let gameState = "info";
 let startMenuIndex = 0;
+let ecosystemMenuIndex = 0;
 let gameOverMenuIndex = 0;
 
 function showScreen(screen) {
+  infoScreen.classList.add("hidden");
   startScreen.classList.add("hidden");
+  ecosystemScreen.classList.add("hidden");
   gameScreen.classList.add("hidden");
   gameOverScreen.classList.add("hidden");
   screen.classList.remove("hidden");
 
-  if (screen === startScreen) {
-    setStartMenuFocus(0);
+  if (screen === infoScreen) {
+    gameState = "info";
+    setInfoMenuFocus();
+  } else if (screen === startScreen) {
+    gameState = "speciesSelect";
+    setStartMenuFocus(1);
+  } else if (screen === ecosystemScreen) {
+    gameState = "ecosystem";
+    setEcosystemMenuFocus(0);
   } else if (screen === gameOverScreen) {
+    gameState = "gameOver";
     setGameOverMenuFocus(0);
   } else {
     clearMenuFocus();
@@ -85,6 +108,7 @@ function showScreen(screen) {
 }
 
 function startGame(speciesKey) {
+  resetActiveGame();
   selectedSpecies = speciesData[speciesKey];
   speciesLabel.textContent = selectedSpecies.name;
 
@@ -99,11 +123,11 @@ function startGame(speciesKey) {
   collectibles = [];
   bonusPopups = [];
   score = 0;
+  displayedScore = null;
   finalScoreValue = 0;
   frameCount = 0;
-  gameRunning = true;
   scoreSubmitted = false;
-  scoreLabel.textContent = "0";
+  updateScoreLabel();
   scoreForm.classList.remove("hidden");
   playerNameInput.value = "";
   playerNameInput.disabled = false;
@@ -111,12 +135,13 @@ function startGame(speciesKey) {
   scoreSubmitButton.textContent = "Save";
 
   showScreen(gameScreen);
-  cancelAnimationFrame(animationId);
-  animationId = requestAnimationFrame(gameLoop);
+  gameState = "countdown";
+  drawGame();
+  startCountdown();
 }
 
 function flap() {
-  if (!gameRunning) {
+  if (gameState !== "playing") {
     return;
   }
 
@@ -124,18 +149,64 @@ function flap() {
 }
 
 function gameLoop() {
+  if (gameState !== "playing") {
+    return;
+  }
+
   updateGame();
   drawGame();
 
-  if (gameRunning) {
+  if (gameState === "playing") {
     animationId = requestAnimationFrame(gameLoop);
   }
+}
+
+function startCountdown() {
+  showCountdownLabel(0);
+}
+
+function showCountdownLabel(index) {
+  countdownOverlay.textContent = countdownLabels[index];
+  countdownOverlay.classList.remove("hidden");
+
+  if (index === countdownLabels.length - 1) {
+    countdownTimeoutId = window.setTimeout(beginPlaying, 700);
+    return;
+  }
+
+  countdownTimeoutId = window.setTimeout(() => showCountdownLabel(index + 1), 1000);
+}
+
+function beginPlaying() {
+  countdownOverlay.classList.add("hidden");
+  gameState = "playing";
+  animationId = requestAnimationFrame(gameLoop);
+}
+
+function resetActiveGame() {
+  cancelAnimationFrame(animationId);
+  window.clearTimeout(countdownTimeoutId);
+  countdownOverlay.classList.add("hidden");
+  countdownOverlay.textContent = "";
+}
+
+function returnToInfo() {
+  resetActiveGame();
+  selectedSpecies = null;
+  player = null;
+  obstacles = [];
+  collectibles = [];
+  bonusPopups = [];
+  score = 0;
+  displayedScore = null;
+  frameCount = 0;
+  showScreen(infoScreen);
 }
 
 function updateGame() {
   frameCount += 1;
   score += 1;
-  scoreLabel.textContent = Math.floor(score / 10);
+  updateScoreLabel();
 
   player.velocity += selectedSpecies.gravity;
   player.y += player.velocity;
@@ -364,7 +435,7 @@ function collectBonusStones() {
     }
 
     score += collectibleBonus * 10;
-    scoreLabel.textContent = Math.floor(score / 10);
+    updateScoreLabel();
     bonusPopups.push({
       x: collectible.x + collectible.size / 2,
       y: collectible.y,
@@ -386,7 +457,7 @@ function hitsCollectible(collectible) {
 }
 
 function endGame() {
-  gameRunning = false;
+  gameState = "gameOver";
   cancelAnimationFrame(animationId);
   finalScoreValue = Math.floor(score / 10);
   finalScore.textContent = finalScoreValue;
@@ -398,6 +469,17 @@ function endGame() {
 
 function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function updateScoreLabel() {
+  const nextDisplayedScore = Math.floor(score / 10);
+
+  if (nextDisplayedScore === displayedScore) {
+    return;
+  }
+
+  displayedScore = nextDisplayedScore;
+  scoreLabel.textContent = displayedScore;
 }
 
 function getRandomFact() {
@@ -489,11 +571,24 @@ function formatArcadeName(name) {
   return arcadeName || "????";
 }
 
+function setInfoMenuFocus() {
+  clearMenuFocus();
+  startGameButton.classList.add("menu-selected");
+  startGameButton.focus();
+}
+
 function setStartMenuFocus(index) {
   startMenuIndex = wrapIndex(index, startMenuItems.length);
   clearMenuFocus();
   startMenuItems[startMenuIndex].classList.add("menu-selected");
   startMenuItems[startMenuIndex].focus();
+}
+
+function setEcosystemMenuFocus(index) {
+  ecosystemMenuIndex = wrapIndex(index, ecosystemMenuItems.length);
+  clearMenuFocus();
+  ecosystemMenuItems[ecosystemMenuIndex].classList.add("menu-selected");
+  ecosystemMenuItems[ecosystemMenuIndex].focus();
 }
 
 function setGameOverMenuFocus(index) {
@@ -510,7 +605,7 @@ function setGameOverMenuFocus(index) {
 }
 
 function clearMenuFocus() {
-  for (const item of [...startMenuItems, ...gameOverMenuItems]) {
+  for (const item of [startGameButton, ...startMenuItems, ...ecosystemMenuItems, ...gameOverMenuItems]) {
     item.classList.remove("menu-selected");
   }
 }
@@ -520,11 +615,19 @@ function wrapIndex(index, itemCount) {
 }
 
 function isStartScreenVisible() {
-  return !startScreen.classList.contains("hidden");
+  return gameState === "speciesSelect";
+}
+
+function isInfoScreenVisible() {
+  return gameState === "info";
 }
 
 function isGameOverScreenVisible() {
-  return !gameOverScreen.classList.contains("hidden");
+  return gameState === "gameOver";
+}
+
+function isEcosystemScreenVisible() {
+  return gameState === "ecosystem";
 }
 
 function isArrowKey(code) {
@@ -548,6 +651,26 @@ function handleStartMenuKey(event) {
   }
 }
 
+function handleEcosystemMenuKey(event) {
+  if (isArrowKey(event.code)) {
+    event.preventDefault();
+    setEcosystemMenuFocus(ecosystemMenuIndex + moveDirection(event.code));
+    return;
+  }
+
+  if (event.code === "Enter") {
+    event.preventDefault();
+    ecosystemMenuItems[ecosystemMenuIndex].click();
+  }
+}
+
+function handleInfoMenuKey(event) {
+  if (event.code === "Enter" && document.activeElement === startGameButton) {
+    event.preventDefault();
+    startGameButton.click();
+  }
+}
+
 function handleGameOverMenuKey(event) {
   if (isArrowKey(event.code)) {
     event.preventDefault();
@@ -565,14 +688,21 @@ function handleGameOverMenuKey(event) {
     scoreForm.requestSubmit();
   } else if (gameOverMenuItems[gameOverMenuIndex] === scoreSubmitButton) {
     scoreForm.requestSubmit();
+  } else if (gameOverMenuItems[gameOverMenuIndex] === gameOverInfoButton) {
+    gameOverInfoButton.click();
   } else {
     restartButton.click();
   }
 }
 
+startGameButton.addEventListener("click", () => showScreen(startScreen));
+speciesInfoButton.addEventListener("click", returnToInfo);
+ecosystemButton.addEventListener("click", () => showScreen(ecosystemScreen));
+ecosystemBackButton.addEventListener("click", () => showScreen(startScreen));
 apolloButton.addEventListener("click", () => startGame("apollo"));
 vultureButton.addEventListener("click", () => startGame("vulture"));
 restartButton.addEventListener("click", () => showScreen(startScreen));
+gameOverInfoButton.addEventListener("click", returnToInfo);
 
 scoreForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -594,8 +724,18 @@ playerNameInput.addEventListener("input", () => {
 });
 
 window.addEventListener("keydown", (event) => {
+  if (isInfoScreenVisible()) {
+    handleInfoMenuKey(event);
+    return;
+  }
+
   if (isStartScreenVisible()) {
     handleStartMenuKey(event);
+    return;
+  }
+
+  if (isEcosystemScreenVisible()) {
+    handleEcosystemMenuKey(event);
     return;
   }
 
@@ -612,4 +752,4 @@ window.addEventListener("keydown", (event) => {
 
 canvas.addEventListener("click", flap);
 renderLeaderboards();
-setStartMenuFocus(0);
+setInfoMenuFocus();
