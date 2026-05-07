@@ -136,39 +136,51 @@
 
         <section id="ecosystem-screen" class="screen ecosystem-screen hidden">
         <h1>Dalmatian Coast Ecosystem</h1>
-        <div class="ecosystem-grid">
-          <article class="ecosystem-card">
+        <div id="ecosystem-grid" class="ecosystem-grid">
+          <article id="alpine-ecosystem-card" class="ecosystem-card reveal-card" tabindex="0" role="button">
             <h2>Alpine Region</h2>
-            <p>
-              Alpine regions support unique biodiversity, regulate water systems, and provide
-              protected habitats for specialized mountain species. Healthy alpine plants also help
-              reduce erosion and environmental instability.
-            </p>
+            <div class="terrain-visual alpine-visual" aria-hidden="true">
+              <span class="mountain mountain-back"></span>
+              <span class="mountain mountain-front"></span>
+              <span class="snowcap snowcap-left"></span>
+              <span class="snowcap snowcap-right"></span>
+              <span class="pine pine-left"></span>
+              <span class="pine pine-right"></span>
+            </div>
+            <p class="learn-prompt">Press to Learn</p>
           </article>
-          <article class="ecosystem-card">
+          <article id="velebit-ecosystem-card" class="ecosystem-card reveal-card" tabindex="0" role="button">
             <h2>Velebit</h2>
-            <p>
-              Velebit connects coastal and mountain environments. Its cliffs, forests, and karst
-              landscapes create important wildlife habitat.
-            </p>
+            <div class="terrain-visual velebit-visual" aria-hidden="true">
+              <span class="karst-cliff cliff-left"></span>
+              <span class="karst-cliff cliff-right"></span>
+              <span class="karst-ridge"></span>
+              <span class="karst-stone stone-one"></span>
+              <span class="karst-stone stone-two"></span>
+            </div>
+            <p class="learn-prompt">Press to Learn</p>
           </article>
-          <article class="ecosystem-card">
+          <article id="apollo-ecosystem-card" class="ecosystem-card reveal-card" tabindex="0" role="button">
             <h2>Apollo Butterfly</h2>
-            <p>
-              Apollo butterflies support biodiversity by visiting flowering plants and contributing
-              to pollination. They are indicator species, so population declines can signal habitat
-              fragmentation or environmental stress.
-            </p>
+            <canvas id="apollo-ecosystem-visual" class="animal-visual" width="148" height="96" aria-hidden="true"></canvas>
+            <p class="learn-prompt">Press to Learn</p>
           </article>
-          <article class="ecosystem-card">
+          <article id="vulture-ecosystem-card" class="ecosystem-card reveal-card" tabindex="0" role="button">
             <h2>Griffon Vulture</h2>
-            <p>
-              Griffon vultures soar over cliffs and open landscapes. They help ecosystems by
-              cleaning up carrion and recycling nutrients.
-            </p>
+            <canvas id="vulture-ecosystem-visual" class="animal-visual" width="148" height="96" aria-hidden="true"></canvas>
+            <p class="learn-prompt">Press to Learn</p>
           </article>
         </div>
-        <div class="menu-nav menu-nav-left">
+        <div id="ecosystem-detail-panel" class="animal-detail-panel hidden">
+          <h2 id="animal-detail-title">Apollo Butterfly</h2>
+          <canvas id="animal-detail-visual" class="animal-visual animal-detail-visual" width="148" height="96" aria-hidden="true"></canvas>
+          <div id="terrain-detail-visual" class="terrain-visual alpine-visual terrain-detail-visual hidden" aria-hidden="true"></div>
+          <p id="animal-detail-text"></p>
+          <button id="ecosystem-detail-back-button" class="arrow-button arrow-left" type="button">
+            Back to Ecosystem
+          </button>
+        </div>
+        <div id="ecosystem-main-nav" class="menu-nav menu-nav-left">
           <button id="ecosystem-back-button" class="arrow-button arrow-left" type="button">
             Back to Game
           </button>
@@ -217,6 +229,9 @@
         </section>
       </main>
     </div>
+    <button id="mute-button" class="mute-button" type="button" aria-pressed="false">
+      SOUND ON
+    </button>
 
     <script src="game.js"></script>
   </body>
